@@ -4,7 +4,7 @@ var Spotify = require('node-spotify-api');
 var request = require('request');
 
 var action = process.argv[2];
-var song = process.argv[3];
+var value = process.argv[3];
 
 var clientTwitter = new Twitter({
   consumer_key: 'EThGvDaicAFEyeIjtS00HWALY',
@@ -59,7 +59,7 @@ function spotifySong() {
 	else {
 		// manual search of song
 		spotify
-			.search({ type: 'track', query: song, limit: 1 })
+			.search({ type: 'track', query: value, limit: 1 })
 			.then(function(response) {
 				console.log('Artist: ' + response.tracks.items[0].album.artists[0].name);
 				console.log('Song Name: ' + response.tracks.items[0].name);
@@ -70,6 +70,15 @@ function spotifySong() {
 				console.log(err);
 			});
 	}
+}
+
+function movieThis() {
+	request
+		.get('http://imdb.com')
+		.search({ query: value })
+		.on('response', function(response) {
+			console.log(response)
+		})
 }
 
 
