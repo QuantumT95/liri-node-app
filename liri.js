@@ -19,7 +19,7 @@ var spotify = new Spotify({
   secret: 'b4125b94883441ce8ef482b84d631044',
 });
 
-
+// main function with switch case
 function lala() {
 	switch (action) {
 	case "my-tweets":
@@ -36,14 +36,14 @@ function lala() {
 		break;	
 	}
 };    
-
+// function for latest tweets for awesome
 function latestTweets() {
 	clientTwitter.get('search/tweets', { id:306002520, q:'awesome'}, function (err, data, resp) {
 		for (i = 0; i < data.statuses.length; i++)
 			console.log(data.statuses[i].text);
 	});
 };
-
+// function for spotify the song
 function spotifySong() {
 	if (!song)  {
 		// hard code of the song The Sign by Ace of Base
@@ -74,7 +74,7 @@ function spotifySong() {
 			});
 	}
 }
-
+//function for imdb search
 function movieThis() {
 	if (!value) {
     value = "Mr Nobody";
@@ -95,7 +95,7 @@ function movieThis() {
     }
   });
 }
-
+//function for reading random text file and executing it
 function doIt() {
 	fs.readFile('random.txt', "utf8", (err, data) => {
 		var dataArr = data.trim().split(',');
@@ -103,10 +103,20 @@ function doIt() {
 		process.argv[3] = dataArr[1];
 		console.log(dataArr[0]);
 		console.log(dataArr[1]);
-		lala();
+		spotify
+			.search({ type: 'track', query: dataArr[1], limit: 1 })
+			.then(function(response) {
+				console.log('Artist: ' + response.tracks.items[0].album.artists[0].name);
+				console.log('Song Name: ' + response.tracks.items[0].name);
+				console.log('Preview Link: ' + response.tracks.items[0].preview_url);
+				console.log('Album Name: ' + response.tracks.items[0].album.name);
+			})
+			.catch(function(err) {
+				console.log(err);
+			});
 	})
 }
-
+//executes function
 lala();
 
 
