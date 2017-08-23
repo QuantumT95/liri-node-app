@@ -2,6 +2,7 @@ var keys = require("./keys.js");
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require('request');
+var fs = require('fs');
 
 var action = process.argv[2];
 var value = process.argv[3];
@@ -19,7 +20,8 @@ var spotify = new Spotify({
 });
 
 
-switch (action) {
+function lala() {
+	switch (action) {
 	case "my-tweets":
 		latestTweets();
 		break;
@@ -32,7 +34,8 @@ switch (action) {
 	case "do-what-it-says":
 		doIt();
 		break;	
-}
+	}
+};    
 
 function latestTweets() {
 	clientTwitter.get('search/tweets', { id:306002520, q:'awesome'}, function (err, data, resp) {
@@ -73,16 +76,38 @@ function spotifySong() {
 }
 
 function movieThis() {
-	request
-		.get('http://imdb.com')
-		.search({ query: value })
-		.on('response', function(response) {
-			console.log(response)
-		})
+	if (!value) {
+    value = "Mr Nobody";
+  }
+  var urlHit = "http://www.omdbapi.com/?t=" + value + "&y=&plot=full&tomatoes=true&apikey=40e9cece";
+  request(urlHit, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      var jsonData = JSON.parse(body);
+      console.log("Title: " + jsonData.Title);
+      console.log("Year: " + jsonData.Year);
+      console.log("Rated: " + jsonData.Rated);
+      console.log("IMDB Rating: " + jsonData.imdbRating);
+      console.log("Country: " + jsonData.Country);
+      console.log("Language: " + jsonData.Language);
+      console.log("Plot: " + jsonData.Plot);
+      console.log("Actors: " + jsonData.Actors);
+      console.log("Rotton Tomatoes URL: " + jsonData.tomatoURL);
+    }
+  });
 }
 
+function doIt() {
+	fs.readFile('random.txt', "utf8", (err, data) => {
+		var dataArr = data.trim().split(',');
+		process.argv[2] = dataArr[0];
+		process.argv[3] = dataArr[1];
+		console.log(dataArr[0]);
+		console.log(dataArr[1]);
+		lala();
+	})
+}
 
-
+lala();
 
 
 // client.get('search/tweets', { id:306002520 }, function (err, data, resp) {
